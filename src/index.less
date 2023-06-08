@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+input {
+  &::placeholder {
+    color: gray;
+  }
+}
+
+.container {
+  display: flex;
+
+  .item {
+    order: 0;
+  }
+
+  .arrow {
+    &.arrow-left {
+      transform: translateX(-50%);
+    }
+  }
+}
