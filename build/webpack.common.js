@@ -20,7 +20,7 @@ module.exports = {
     // output中的path是生成目标文件的绝对路径，但是目标文件路径中是看不到编译后的文件，因为webpack-dev-server实时编译的文件都保存到了内存中
     // output中的publicPath是访问output生成的文件的路径（是一个访问路径，不需要对应真实的文件路径）
     path: path.resolve(constants.distPath),
-    publicPath: '/dist/', // 静态资源页面访问路径
+    publicPath: '', // 静态资源页面访问路径
     filename: ENV === 'production' ? '[name].min.js' : '[name].js',
     library: constants.windowGlobalName,
     libraryExport: 'default',
@@ -65,7 +65,28 @@ module.exports = {
       },
       {
         test: /\.ts$/,
-        use: 'ts-loader',
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                [
+                  '@babel/preset-env',
+                  {
+                    // https://github.com/browserslist/browserslist
+                    // 要兼容的目标浏览器
+                    targets: 'defaults',
+                    // 使用 corejs 的方式：usage 表示按需加载
+                    useBuiltIns: 'usage',
+                    // 指定 corejs 的版本
+                    corejs: 3
+                  }
+                ]
+              ]
+            }
+          },
+          'ts-loader'
+        ],
         exclude: /(node_modules)/
       }
     ]

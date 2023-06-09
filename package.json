@@ -12,8 +12,12 @@
   "author": "hyde.wus@gmail.com",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
     "autoprefixer": "^10.4.14",
+    "babel-loader": "^9.1.2",
     "clean-webpack-plugin": "^4.0.0",
+    "core-js": "^3.30.2",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
     "file-loader": "^6.2.0",

@@ -12,7 +12,7 @@ module.exports = merge(common, {
   devtool: false,
   devServer: {
     // host: '0.0.0.0',
-    port: 6666,
+    port: 8888,
     open: true,
     // hot: true,
     historyApiFallback: true,
