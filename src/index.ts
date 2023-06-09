@@ -1,9 +1,4 @@
 import './index.less';
+import Player from './player';
 
-function JS_SDK(value: string = 'JS-SDK!'): void {
-  console.log('===========================');
-  console.log('Hello, ' + value);
-  console.log('===========================');
-}
-
-export default JS_SDK;
+export default Player;

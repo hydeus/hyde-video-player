@@ -5,15 +5,30 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Typescript + webpack</title>
+  <title>Hyde player</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 850px;
+      height: 500px;
+    }
+  </style>
 </head>
 
 <body>
-  <p>Typescript + webpack</p>
+  <div id="J_HydePlayer_container" class="container"></div>
 
-  <script type="text/javascript" src="JS-SDK.js"></script>
+  <script type="text/javascript" src="hyde.player.js"></script>
   <script>
-    JS_SDK()
+    const player = new HydePlayer('J_HydePlayer_container', {
+      url: 'https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/byted-player-videos/1.0.0/xgplayer-demo-720p.mp4'
+    })
+
+    console.log(player)
   </script>
 </body>
 

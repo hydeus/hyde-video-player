@@ -14,7 +14,7 @@ const ENV = process.env.NODE_ENV || 'development';
 
 module.exports = {
   entry: {
-    'JS-SDK': path.resolve(constants.srcPath, 'index.ts')
+    'hyde.player': path.resolve(constants.srcPath, 'index.ts')
   },
   output: {
     // output中的path是生成目标文件的绝对路径，但是目标文件路径中是看不到编译后的文件，因为webpack-dev-server实时编译的文件都保存到了内存中

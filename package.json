@@ -1,8 +1,9 @@
 {
-  "name": "JS_SDK",
+  "name": "HydePlayer",
   "version": "1.0.0",
-  "description": "JS SDK(浏览器端) 项目初始化脚手架",
-  "main": "index.ts",
+  "description": "video player",
+  "main": "src/index.ts",
+  "typings": "types/index.d.ts",
   "scripts": {
     "dev": "webpack-dev-server --config build/webpack.dev.js",
     "build": "cross-env NODE_ENV=production webpack --progress --config build/webpack.prod.js",
@@ -20,6 +21,7 @@
     "core-js": "^3.30.2",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
+    "css-minimizer-webpack-plugin": "^5.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.1",
     "less": "^4.1.3",
@@ -39,7 +41,5 @@
     "webpack-merge": "^5.9.0",
     "webpackbar": "^5.0.2"
   },
-  "dependencies": {
-    "css-minimizer-webpack-plugin": "^5.0.0"
-  }
+  "dependencies": {}
 }

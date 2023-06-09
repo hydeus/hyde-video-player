@@ -14,5 +14,5 @@ module.exports = {
   srcPath,
   distPath,
   publicPath,
-  windowGlobalName: 'JS_SDK'
+  windowGlobalName: 'HydePlayer'
 };
