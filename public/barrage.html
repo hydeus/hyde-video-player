@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .centainer {
+        width: 1000px;
+        height: 550px;
+        margin: 0 auto;
+        position: relative;
+        background-color: #000;
+      }
+
+      #video {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
+      #canvas {
+        position: absolute;
+        /* 画布穿透 */
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+      }
+
+      .footer {
+        width: 1000px;
+        margin: 50px auto 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="centainer">
+      <video src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/byted-player-videos/1.0.0/xgplayer-demo-720p.mp4" id="video" controls autoplay muted loop></video>
+      <canvas id="canvas"></canvas>
+    </div>
+    <div class="footer">
+      <div>
+        <h2>弹幕配置：</h2>
+        <p>
+          显示区域：
+          <select id="area">
+            <option value="0">全屏</option>
+            <option value="1">上</option>
+            <option value="2">中</option>
+            <option value="3">下</option>
+          </select>
+        </p>
+        <p>
+          字体颜色：
+          <input type="color" id="color" />
+        </p>
+        <p>
+          字体大小：
+          <input type="range" id="range" />
+        </p>
+        <p>
+          弹幕速度：
+          <select id="speed">
+            <option value="10">高</option>
+            <option value="5">中</option>
+            <option value="1">低</option>
+          </select>
+        </p>
+      </div>
+      <div style="margin-top: 30px">
+        <input type="text" id="text" placeholder="请输入弹幕内容" autocomplete="off" />
+        <button id="btn">发送弹幕</button>
+      </div>
+    </div>
+
+    <script>
+      const $ = document.querySelector.bind(document)
+      const video = $('#video')
+      const canvas = $('#canvas')
+      const text = $('#text')
+      const color = $('#color')
+      const range = $('#range')
+      const btn = $('#btn')
+      //弹幕数据
+      const data = [
+        { value: '弹幕1', time: 0, color: 'green', speed: '3', fontSize: 40 },
+        { value: '弹幕2', time: 2, color: 'green' },
+        { value: '弹幕3', time: 2, color: 'red' },
+        { value: '弹幕4', time: 2, color: 'orign' },
+        { value: '弹幕5', time: 2, color: 'blue' },
+        { value: '弹幕6', time: 2, color: 'green' },
+        { value: '弹幕7', time: 2, color: 'green' },
+        { value: '弹幕8', time: 2, color: 'green' },
+        { value: '弹幕9', time: 2, color: 'green' }
+      ]
+
+      class Barrage {
+        constructor(obj, ctx) {
+          this.value = obj.value
+          this.time = obj.time
+          this.obj = obj
+          this.ctx = ctx
+        }
+        //初始化，弹幕出现的位置，速度，颜色，字体大小等
+        init() {
+          this.color = this.obj.color || this.ctx.color
+          this.speed = this.obj.speed || this.ctx.speed
+          this.fontSize = this.obj.fontSize || this.ctx.fontSize
+          //获取文本在画布中的宽度和高度
+          let span = document.createElement('span')
+          //添加内容
+          span.innerText = this.value
+          //设置字体
+          span.style.font = this.fontSize + 'px "Microsoft Yahei" '
+          //加入到body
+          document.body.appendChild(span)
+          //此时获取该span标签的宽高
+          this.spanWidth = span.clientWidth
+          this.spanHeight = span.clientHeight
+          //移除该元素
+          document.body.removeChild(span)
+          //随机出现弹幕的位置
+          this.x = this.ctx.canvas.clientWidth
+          this.y = this.ctx.canvas.height * Math.random()
+          //判断y值是否超出边界
+          if (this.y < this.fontSize) {
+            //上边界出去了
+            this.y = this.fontSize
+          }
+          if (this.y > this.ctx.canvas.height - this.fontSize) {
+            this.y = this.ctx.canvas.height - this.fontSize
+          }
+        }
+        rander() {
+          this.ctx.context.font = this.fontSize + 'px "Microsoft Yahei"'
+          this.ctx.context.fillStyle = this.color
+          this.ctx.context.fillText(this.value, this.x, this.y)
+        }
+      }
+
+      class CanvasBarrage {
+        constructor(video, canvas, options) {
+          if (!video && !canvas) return
+          this.video = video
+          this.canvas = canvas
+          const defaultData = {
+            color: 'yellow',
+            speed: 2,
+            fontSize: 20,
+            data: []
+          }
+          //对象合并
+          Object.assign(this, defaultData, options)
+          this.isPaused = true
+
+          //获取画布，设置宽度和video一样
+          this.context = canvas.getContext('2d')
+          this.canvas.width = video.clientWidth
+          this.canvas.height = video.clientHeight
+          //每一条数据渲染成一个弹幕实例
+          this.barrages = this.data.map(e => {
+            return new Barrage(e, this)
+          })
+
+          this.render()
+        }
+        renderBarrage() {
+          //获取当前视频时间
+          const time = this.video.currentTime
+          this.barrages.forEach(barrage => {
+            //如果没有渲染过，先初始化
+            if (!barrage.flag && time >= barrage.time) {
+              if (!barrage.initRender) {
+                barrage.init()
+                barrage.initRender = true
+              }
+              //y轴不变，x轴递减移动
+              barrage.x -= barrage.speed
+              barrage.rander() //渲染
+            }
+            if (barrage.x <= barrage.width) {
+              barrage.flag = true //停止渲染标记
+            }
+          })
+        }
+        render() {
+          //清空画布
+          this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+          //渲染
+          this.renderBarrage()
+          //递归渲染
+          if (!this.isPaused) {
+            requestAnimationFrame(this.render.bind(this))
+          }
+        }
+        reset() {
+          //清空画布
+          this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+          //获取当前时间
+          const time = this.video.currentTime
+          this.barrages.forEach(barrage => {
+            if (time <= barrage.time) {
+              //移动进度条之后的时间如果还在渲染时间之前，重新初始化渲染
+              barrage.initRender = false
+            }
+          })
+        }
+        add(obj) {
+          this.barrages.push(new Barrage(obj, this))
+        }
+      }
+      //初始化实例，入口
+      const canvasBarrage = new CanvasBarrage(video, canvas, { data })
+
+      //播放监听事件
+      video.addEventListener('play', function () {
+        canvasBarrage.isPaused = false
+        canvasBarrage.render()
+      })
+      //暂停监听事件
+      video.addEventListener('pause', function () {
+        canvasBarrage.isPaused = true
+      })
+      //滚动条移动监听事件
+      video.addEventListener('seeked', function () {
+        //重置
+        canvasBarrage.reset()
+      })
+
+      //添加弹幕
+      $('#btn').addEventListener('click', function () {
+        const value = $('#text').value
+        const color = $('#color').value
+        const time = video.currentTime
+        const fontSize = $('#range').value
+        const obj = { value, color, time, fontSize }
+        canvasBarrage.add(obj)
+      })
+
+      function color16() {
+        //十六进制颜色随机
+        const r = Math.floor(Math.random() * 256)
+        const g = Math.floor(Math.random() * 256)
+        const b = Math.floor(Math.random() * 256)
+        const color = `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`
+        return color
+      }
+
+      // setInterval(() => {
+      //   // for (var i = 10; i < 100; i++) {
+      //   //   canvasBarrage.add({
+      //   //     fontSize: parseInt(Math.random() * 50), // 范围12-24
+      //   //     color: color16(),
+      //   //     time: video.currentTime,
+      //   //     speed: parseInt(Math.random() * 10),
+      //   //     value: '弹幕' + i
+      //   //   })
+      //   // }
+      //   canvasBarrage.add({
+      //     fontSize: parseInt(Math.random() * 50), // 范围12-24
+      //     color: color16(),
+      //     time: video.currentTime,
+      //     speed: parseInt(Math.random() * 10),
+      //     value: '弹幕' + parseInt(Math.random() * 1000)
+      //   })
+      // }, 50)
+
+      function animate() {
+        canvasBarrage.add({
+          fontSize: parseInt(Math.random() * 50), // 范围12-24
+          color: color16(),
+          time: video.currentTime,
+          speed: parseInt(Math.random() * 10),
+          value: '弹幕' + parseInt(Math.random() * 1000)
+        })
+
+        requestAnimationFrame(animate)
+      }
+
+      requestAnimationFrame(animate)
+    </script>
+  </body>
+</html>

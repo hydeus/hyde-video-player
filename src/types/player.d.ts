@@ -1,6 +1,6 @@
 import { Options } from './options'
 
-export class Player {
+export interface Player {
   container: HTMLDivElement | string;
   options: Options;
   

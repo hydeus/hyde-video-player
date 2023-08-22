@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .centainer {
+      width: 1000px;
+      height: 550px;
+      margin: 0 auto;
+      position: relative;
+      background-color: #000;
+    }
+
+    #video {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    #canvas {
+      position: absolute;
+      /* 画布穿透 */
+      /* pointer-events: none; */
+      width: 100%;
+      height: 100%;
+    }
+
+    .footer {
+      width: 1000px;
+      margin: 50px auto 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="centainer">
+    <canvas id="canvas" width="1000" height="500"></canvas>
+  </div>
+
+  <script src="./barrage.js"></script>
+  <script>
+    var barrageCanvas = new BarrageCanvas(document.getElementById('canvas'))
+    console.log(barrageCanvas)
+
+    // setInterval(() => {
+    //   barrageCanvas.add({
+    //     fontSize: 16, // 范围12-24
+    //     color: '#fff',
+    //     speed: parseInt(Math.random() * 10),
+    //     content: parseInt(Math.random() * 1000)
+    //   })
+    // }, 500)
+
+    barrageCanvas.add({
+      fontSize: 30, // 范围12-24
+      color: '#fff',
+      speed: 1,
+      content: '这里是弹幕内容啊！！！'
+    })
+  </script>
+</body>
+
+</html>

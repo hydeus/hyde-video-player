@@ -27,7 +27,7 @@ export function createDom(classname: string | undefined = '', tpl: string | unde
   return dom
 }
 
-export function hasClass(el: HTMLElement, className: string): boolean {
+export function hasClass(el: HTMLElement, className: string): boolean | undefined {
   if (!el) {
     return false
   }
@@ -41,7 +41,7 @@ export function hasClass(el: HTMLElement, className: string): boolean {
   }
 }
 
-export function addClass(el: HTMLElement, className: string): void {
+export function addClass(el: HTMLElement, className: string): void | undefined {
   if (!el) {
     return
   }

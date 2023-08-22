@@ -1,2 +1,2 @@
-export *  from './util'
-export *  from './dom'
+export * from './util'
+export * from './dom'
